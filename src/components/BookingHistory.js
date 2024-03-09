@@ -49,7 +49,6 @@ const BookingHistory = () => {
           'Content-Type': 'application/json',
           'x-access-token': user?.data?.accessToken,
         },
-        mode: 'no-cors'
       });
 
       if (response.status === 401) { 

@@ -56,7 +56,6 @@ const Login = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      mode: 'no-cors'
     };
 
     // Data to be sent in the request body
