@@ -54,6 +54,7 @@ const ViewHotels = () => {
           'Content-Type': 'application/json',
           'x-access-token': user?.data?.accessToken,
         },
+        mode: 'no-cors',
         body: JSON.stringify({
           date: selectedDate.toISOString(),
         }),
@@ -112,6 +113,7 @@ const ViewHotels = () => {
           'Content-Type': 'application/json',
           'x-access-token': user?.data?.accessToken,
         },
+        mode: 'no-cors',
         body: JSON.stringify({
           hotelId: hotel.hotelId,
           date: selectedDate.toISOString(),

@@ -55,7 +55,8 @@ const Login = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      mode: 'no-cors'
     };
 
     // Data to be sent in the request body
@@ -63,7 +64,6 @@ const Login = () => {
       email: email.current.value,
       password: password.current.value
     };
-
     if (!isSignInForm) {
       // Sign up
       requestOptions.body = JSON.stringify({
