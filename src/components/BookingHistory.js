@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { removeUser } from '../utils/userSlice';
+import { PROD_API_URL } from '../utils/util';
 
 /**
  * BookingHistory component displays the booking history of the user.
@@ -20,6 +21,13 @@ const BookingHistory = () => {
   const [bookingHistory, setBookingHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    // Use useEffect for navigation
+    if (!user.data) {
+      navigate('/');
+    }
+  }, [user.data, navigate]);
+
   /**
    * Handles the sign-out action and navigates to the home page.
    * @function
@@ -35,7 +43,7 @@ const BookingHistory = () => {
    */
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:4000/v1/bookings', {
+      const response = await fetch(PROD_API_URL + '/bookings', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -43,11 +51,18 @@ const BookingHistory = () => {
         },
       });
 
+      if (response.status === 401) { 
+        // Token expired
+        alert('Login expired, please login again.');
+        dispatch(removeUser());
+        navigate('/');
+        return;
+      }
+
       if (!response.ok) {
         alert('Failed to fetch booking history, please try again later');
         throw new Error('Failed to fetch booking history');
       }
-
       const data = await response.json();
       setBookingHistory(data.data);
     } catch (error) {
@@ -88,24 +103,30 @@ const BookingHistory = () => {
       {loading ? (
         <BarLoader />
       ) : (
-        <ul className="space-y-4">
-          {bookingHistory.map((booking) => (
-            <li key={booking.hotelName + booking.checkIn} className="bg-white p-6 rounded-lg shadow-md">
-              <div>
-                <span className="font-bold text-lg">Hotel Name:</span> {booking.hotelName}
-              </div>
-              <div>
-                <span className="font-bold text-lg">Price:</span> {booking.price}
-              </div>
-              <div>
-                <span className="font-bold text-lg">Location:</span> {booking.location}
-              </div>
-              <div>
-                <span className="font-bold text-lg">Check-In:</span> {new Date(booking.checkIn).toLocaleDateString()}
-              </div>
-            </li>
-          ))}
-        </ul>
+        <>
+          {bookingHistory.length === 0 ? (
+            <p>No bookings yet.</p>
+          ) : (
+            <ul className="space-y-4">
+              {bookingHistory.map((booking) => (
+                <li key={booking.hotelName + booking.checkIn} className="bg-white p-6 rounded-lg shadow-md">
+                  <div>
+                    <span className="font-bold text-lg">Hotel Name:</span> {booking.hotelName}
+                  </div>
+                  <div>
+                    <span className="font-bold text-lg">Price:</span> {booking.price}
+                  </div>
+                  <div>
+                    <span className="font-bold text-lg">Location:</span> {booking.location}
+                  </div>
+                  <div>
+                    <span className="font-bold text-lg">Check-In:</span> {new Date(booking.checkIn).toLocaleDateString()}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );

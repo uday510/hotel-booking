@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Button from './Button';
 import { removeUser } from '../utils/userSlice';
 import { useDispatch } from 'react-redux';
+
 /**
  * Browse component for displaying options to view booking history and book hotels.
  * @component
@@ -12,6 +12,13 @@ const Browse = () => {
   const user = useSelector((store) => store.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Use useEffect for navigation
+    if (!user.data) {
+      navigate('/');
+    }
+  }, [user.data, navigate]);
 
   /**
    * Handles the click event for navigating to the ViewBookingHistory page.
@@ -45,7 +52,7 @@ const Browse = () => {
           Sign Out
         </button>
       </div>
-      
+
       {user && (
         <div className="flex flex-col items-center space-y-4  pt-10">
           <button
@@ -62,7 +69,6 @@ const Browse = () => {
             View Booking History
           </button>
         </div>
-
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Button from './Button';
 import DatePicker from 'react-datepicker';
@@ -7,6 +7,7 @@ import { BarLoader } from 'react-spinners';
 import { useDispatch } from 'react-redux';
 import { removeUser } from '../utils/userSlice';
 import { useNavigate } from 'react-router-dom';
+import { PROD_API_URL } from '../utils/util';
 
 /**
  * ViewHotels component for selecting a date and viewing available hotels.
@@ -21,14 +22,24 @@ const ViewHotels = () => {
   const [loading, setLoading] = useState(false);
 
   /**
+   * Effect hook for navigation.
+   */
+  useEffect(() => {
+    if (!user.data) {
+      navigate('/');
+    }
+  }, [user.data, navigate]);
+
+  /**
    * Handles the date change event.
    * @param {Date} date - Selected date.
    */
   const handleDateChange = (date) => {
-    if (date <= new Date()) { 
-      return alert('Please select a future date');
+    if (date <= new Date()) {
+      alert('Please select a future date');
+    } else {
+      setSelectedDate(date);
     }
-    setSelectedDate(date);
   };
 
   /**
@@ -37,7 +48,7 @@ const ViewHotels = () => {
   const fetchHotels = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/v1/hotels/view', {
+      const response = await fetch(PROD_API_URL + '/hotels/view', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,8 +58,20 @@ const ViewHotels = () => {
           date: selectedDate.toISOString(),
         }),
       });
-      const data = await response.json();
 
+      if (response.status === 401) {
+        alert('Login expired, please login again.');
+        dispatch(removeUser());
+        navigate('/');
+        return;
+      }
+
+      if (!response.ok) {
+        alert('Failed to fetch hotels, please try again later');
+        throw new Error('Failed to fetch hotels');
+      }
+
+      const data = await response.json();
       setHotelList(data.data);
     } catch (error) {
       console.error('Error fetching hotels:', error);
@@ -77,37 +100,48 @@ const ViewHotels = () => {
 
   /**
    * Handles the click event to book a hotel.
-   * @param {string} hotelId - ID of the selected hotel.
+   * @param {Object} hotel - The hotel object.
+   * @param {string} hotel.id - ID of the selected hotel.
    */
-  const handleBookHotel = async ({ id }) => {
+  const handleBookHotel = async (hotel) => {
     try {
-      // Book the hotel
-      const response = await fetch('http://localhost:4000/v1/bookings', {
+      setLoading(true);
+      const response = await fetch(PROD_API_URL + '/bookings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-access-token': user?.data?.accessToken,
         },
         body: JSON.stringify({
-          hotelId: id,
+          hotelId: hotel.hotelId,
           date: selectedDate.toISOString(),
         }),
       });
+
+
+      if (response.status === 401) {
+        alert('Login expired, please login again.');
+        dispatch(removeUser());
+        navigate('/');
+        return;
+      }
 
       if (!response.ok) {
         alert('Failed to book hotel, please try again later');
         throw new Error('Failed to book hotel');
       }
+
       const data = await response.json();
       const { hotelName, price, location, checkIn } = data.data;
 
-      // Show success message with hotel details
-      alert(`Hotel booked successfully!\n\nHotel Name: ${hotelName}\nPrice: ${price}\nLocation: ${location}\nCheck-In: ${checkIn}`);
+      alert(`Hotel booked successfully!\n\nHotel Name: ${hotelName}\nPrice: $${price}\nLocation: ${location}\nCheck-In: ${checkIn}`);
 
-      // Redirect to booking history
       navigate('/booking-history');
     } catch (err) {
+      setLoading(false);
       console.error('Error booking hotel:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -139,7 +173,9 @@ const ViewHotels = () => {
             className="ml-auto"
           />
         </div>
+
         {loading && <BarLoader />}
+       
         {hotelList.length > 0 && (
           <div>
             <h3 className="text-xl font-bold mt-4 mb-2">Available Hotels:</h3>
@@ -151,7 +187,7 @@ const ViewHotels = () => {
                   <p className="text-gray-600">Location: {hotel.location}</p>
                   <p className="text-gray-600">Price: ${hotel.price}</p>
                   <Button
-                    onClick={() => handleBookHotel({ id: hotel.hotelId })}
+                    onClick={() => handleBookHotel(hotel)}
                     label="Book Hotel"
                     bgColor="blue-500"
                     textColor="white"

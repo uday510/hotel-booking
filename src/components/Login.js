@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { checkValidData } from '../utils/util';
-import Header from './Header';
 import { BarLoader } from 'react-spinners';
-import userSlice, { addUser } from "../utils/userSlice";
-import { useDispatch } from 'react-redux';
+import { addUser } from "../utils/userSlice";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { PROD_API_URL, DEV_API_URL } from '../utils/util';
 
 /**
  * Login component for user authentication.
@@ -15,11 +16,21 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((store) => store.user);
 
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
   const userId = useRef(null);
+
+  useEffect(() => {
+    // Check if the user is already logged in
+    if (user.data) {
+      // User is logged in, navigate to /browse
+      navigate('/browse');
+    }
+  }, [user.data, navigate]);
 
   /**
    * Toggles between sign-in and sign-up forms.
@@ -38,9 +49,6 @@ const Login = () => {
     if (validationMessage) return;
 
     setIsLoading(true);
-
-    // API endpoint
-    const API_URL = 'http://localhost:4000/v1/auth';
 
     // Common options for fetch requests
     const requestOptions = {
@@ -64,11 +72,16 @@ const Login = () => {
         userId: userId.current.value
       });
 
-      fetch(API_URL + '/signup', requestOptions)
+      fetch(PROD_API_URL + '/auth/signup', requestOptions)
         .then(response => response.json())
         .then(data => {
-          dispatch(userSlice({ data: data.data, isLogin: true, message: data.message }))
-          alert(data.message);
+          if (!data.data) {
+            alert(data.message);
+            return;
+          }
+          alert(`Signup successful. please login to continue`);
+          setIsSignInForm(true);
+          navigate('/');
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -80,11 +93,16 @@ const Login = () => {
     } else {
       // Sign in
       requestOptions.body = JSON.stringify(requestBody);
-      fetch(API_URL + '/login', requestOptions)
+      fetch(PROD_API_URL + '/auth/login', requestOptions)
         .then(response => response.json())
         .then(data => {
+          if (!data.data) {
+            alert(data.message);
+            return;
+          }
           dispatch(addUser({ data: data.data, isLogin: true, token: data.accessToken, message: data.message }))
-          alert(data.message);
+          alert(`Welcome back, ${data.data.name}`);
+          navigate('/browse');
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -98,7 +116,6 @@ const Login = () => {
 
   return (
     <div>
-      <Header />
       <form
         onSubmit={(e) => e.preventDefault()}
         className="w-full md:w-3/12 absolute p-12 bg-black my-6 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80"
