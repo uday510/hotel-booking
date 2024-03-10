@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "data": {
+    "hotelId": "hotel123",
+    "name": "Hotel Lemon",
+    "bookings": [],
+    "location": "City G",
+    "price": 40000,
+    "_id": "65eaea6608e7800d9532ce18",
+    "createdAt": "2024-03-08T10:37:26.424Z",
+    "updatedAt": "2024-03-08T10:37:26.424Z",
+    "__v": 0
+  },
+  "message": "Hotel created successfully.",
+  "statusCode": 201
+}

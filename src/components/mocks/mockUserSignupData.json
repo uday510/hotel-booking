@@ -1,0 +1,11 @@
+{
+  "statusCode": 201,
+  "data": {
+    "name": "uday",
+    "userId": "uday10",
+    "email": "uday510@icloud.com",
+    "type": "admin"
+  },
+  "message": "User created successfully",
+  "success": true
+}

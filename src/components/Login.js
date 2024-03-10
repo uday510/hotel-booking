@@ -4,7 +4,7 @@ import { BarLoader } from 'react-spinners';
 import { addUser } from "../utils/userSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { PROD_API_URL, DEV_API_URL } from '../utils/util';
+import { PROD_API_URL } from '../utils/util';
 
 /**
  * Login component for user authentication.

@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "data": {
+    "userId": "uday10",
+    "hotelId": "hotel123",
+    "price": 40000,
+    "location": "City G",
+    "checkIn": "27-05-2024"
+  },
+  "message": "Hotel booked successfully.",
+  "statusCode": 201
+}
