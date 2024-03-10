@@ -41,6 +41,6 @@ exports.checkValidData = (email, password) => {
 };
 
 // exports.PROD_API_URL = 'https://api.udayteja.com/v1';
-exports.PROD_API_URL = 'http://18.207.217.9:4000/v1';
+exports.PROD_API_URL = 'https://18.207.217.9/v1';
 
 exports.DEV_API_URL = 'http://localhost:4000/v1';
