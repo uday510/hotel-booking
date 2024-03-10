@@ -7,7 +7,7 @@ import { BarLoader } from 'react-spinners';
 import { useDispatch } from 'react-redux';
 import { removeUser } from '../utils/userSlice';
 import { useNavigate } from 'react-router-dom';
-import { PROD_API_URL } from '../utils/util';
+import { DEV_API_URL, PROD_API_URL } from '../utils/util';
 
 /**
  * ViewHotels component for selecting a date and viewing available hotels.
@@ -48,7 +48,7 @@ const ViewHotels = () => {
   const fetchHotels = async () => {
     try {
       setLoading(true);
-      const response = await fetch(PROD_API_URL + '/hotels/view', {
+      const response = await fetch(DEV_API_URL + '/hotels/view', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ const ViewHotels = () => {
   const handleBookHotel = async (hotel) => {
     try {
       setLoading(true);
-      const response = await fetch(PROD_API_URL + '/bookings', {
+      const response = await fetch(DEV_API_URL + '/bookings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

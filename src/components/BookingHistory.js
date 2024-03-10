@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { removeUser } from '../utils/userSlice';
-import { PROD_API_URL } from '../utils/util';
+import { DEV_API_URL, PROD_API_URL } from '../utils/util';
 
 /**
  * BookingHistory component displays the booking history of the user.
@@ -43,7 +43,7 @@ const BookingHistory = () => {
    */
   const fetchData = async () => {
     try {
-      const response = await fetch(PROD_API_URL + '/bookings', {
+      const response = await fetch(DEV_API_URL + '/bookings', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
