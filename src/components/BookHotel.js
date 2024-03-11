@@ -48,7 +48,7 @@ const ViewHotels = () => {
   const fetchHotels = async () => {
     try {
       setLoading(true);
-      const response = await fetch(DEV_API_URL + '/hotels/view', {
+      const response = await fetch(PROD_API_URL + '/hotels/view', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ const ViewHotels = () => {
   const handleBookHotel = async (hotel) => {
     try {
       setLoading(true);
-      const response = await fetch(DEV_API_URL + '/bookings', {
+      const response = await fetch(PROD_API_URL + '/bookings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

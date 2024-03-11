@@ -4,7 +4,7 @@ import { BarLoader } from 'react-spinners';
 import { addUser } from "../utils/userSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { DEV_API_URL } from '../utils/util';
+import { DEV_API_URL,PROD_API_URL } from '../utils/util';
 
 /**
  * Login component for user authentication.
@@ -71,7 +71,7 @@ const Login = () => {
         userId: userId.current.value
       });
 
-      fetch(DEV_API_URL + '/auth/signup', requestOptions)
+      fetch(PROD_API_URL + '/auth/signup', requestOptions)
         .then(response => response.json())
         .then(data => {
           if (!data.data) {
@@ -92,7 +92,7 @@ const Login = () => {
     } else {
       // Sign in
       requestOptions.body = JSON.stringify(requestBody);
-      fetch(DEV_API_URL + '/auth/login', requestOptions)
+      fetch(PROD_API_URL + '/auth/login', requestOptions)
         .then(response => response.json())
         .then(data => {
           if (!data.data) {

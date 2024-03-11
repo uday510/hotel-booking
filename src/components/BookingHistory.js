@@ -43,7 +43,7 @@ const BookingHistory = () => {
    */
   const fetchData = async () => {
     try {
-      const response = await fetch(DEV_API_URL + '/bookings', {
+      const response = await fetch(PROD_API_URL + '/bookings', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
